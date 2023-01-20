@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;400;700;900&family=Noto+Serif+JP:wght@200;400;700;900&family=Noto+Sans+Mono&display=swap');
+
+:root {
+  --main-font-color: rgb(69, 25, 25);
+  --main-font-transparent: rgba(69, 25, 25, 0.4);
+  --main-bg-color: rgb(250, 252, 252);
+  --header-bg-color: rgba(128, 128, 128, 0.7);
+  --current-page-link-color: rgb(172, 255, 244);
+  --page-link-hover-color: rgb(100, 200, 255);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --main-font-color:  azure;
+    --main-font-transparent: rgba(240, 255, 255, 0.5);
+    --main-bg-color: rgba(3, 18, 64, 1.0);
+    --current-page-link-color: rgba(255,210,0,1);
+    --page-link-hover-color: rgb(255, 240, 174);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+  -webkit-text-size-adjust: 100%;
+  word-break: normal;
+  -moz-tab-size: 4;
+  tab-size: 4;
+}
+@media (max-width: 512px) {
+  html {
+    scroll-padding-top: 13rem;
+  }
+}
+@media (max-width: 375px) {
+  html {
+    font-size: 4.26vw; /* 16/375*100 */
+  }
+}
+
+/* Set core body defaults */
+body {
+  min-height: 100vh;
+  color: var(--main-font-color);
+  background: var(--main-bg-color);
+  transition: color 1s ease-in-out, background-color 1s ease-in-out;
+  font-family: "Noto Sans JP", sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+/* モバイルでも崩れない背景設定のためこのような手法を取る */
+body::before {
+  content: "";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -50;
+  width: 100%;
+  height: 100vh;
+  background-image: url("../img/blue_2.png");
+  background-repeat: no-repeat;
+  background-position: center 70%;
+  background-size: cover;
+  transition: background-image 1s ease-in-out;
+}
+@media (max-width: 1024px) {
+  body::before {
+    background-position: center 0%;
+    background-size: cover;
+    height: 100vh;
+  }
+}
+ul[class],
+ol[class] {
+  list-style: none;
+}
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+/* Make images easier to work with */
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
+label,
+input,
+textarea,
+select {
+  font: inherit;
+  background-color: var(--main-bg-color);
+  color: var(--main-font-color);
+}
+img:not([alt]) {
+  filter: blur(10px);
+}
+#app {
+  min-height: 100vh;
+}
+
+h2 {
+  margin-top: 2rem;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+h3::before {
+  content: "■";
+}
