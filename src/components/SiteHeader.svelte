@@ -38,14 +38,14 @@
     left: 0;
     right: 0;
     top: 0;
-    background-color: var(--main-bg-color);
+    background-color: var(--header-bg-color);
     backdrop-filter: blur(1rem);
-    border-bottom: 2px solid var(--main-bg-color);
   }
   @media (max-width: 1024px) {
     #website-header {
       flex-direction: column;
       height: calc(5.5rem + 1.6rem);
+      border-bottom: 2px solid var(--main-font-color);
     }
   }
 

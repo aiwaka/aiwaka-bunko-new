@@ -3,7 +3,6 @@
   export let href: string;
   export let height = "5.5rem";
   export let mobileHeight = "1.6rem";
-  export let color = "var(--main-font-color)";
   export let hoverColor = "var(--page-link-hover-color)";
   export let currentPageColor = "var(--current-page-link-color)";
 
@@ -18,7 +17,6 @@
     class:current-page={currentPage}
     class="page-link"
     style:line-height={resultHeight}
-    style:color
     style:--hover-color={hoverColor}
     style:--current-page-color={currentPageColor}
     {href}
@@ -62,7 +60,7 @@
   }
 
   .page-link.current-page {
-    color: var(--hover-color);
+    color: var(--current-page-color);
   }
   .page-link.current-page::before {
     width: 100%;

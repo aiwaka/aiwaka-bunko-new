@@ -4,8 +4,9 @@
   --main-font-color: rgb(69, 25, 25);
   --main-font-transparent: rgba(69, 25, 25, 0.4);
   --main-bg-color: rgb(250, 252, 252);
-  --header-bg-color: rgba(128, 128, 128, 0.7);
-  --current-page-link-color: rgb(172, 255, 244);
+  --header-bg-color: var(--main-bg-color);
+  /* --current-page-link-color: rgb(172, 255, 244); */
+  --current-page-link-color: rgb(100, 200, 255);
   --page-link-hover-color: rgb(100, 200, 255);
 }
 @media (prefers-color-scheme: dark) {
@@ -22,9 +23,22 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  position: relative;
+}
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+figure,
+blockquote,
+dl,
+dd {
   margin: 0;
   padding: 0;
-  position: relative;
 }
 html {
   scroll-behavior: smooth;

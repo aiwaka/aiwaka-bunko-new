@@ -52,40 +52,23 @@
 
 <SiteHeader navLinkList={noLoginPageList} />
 <div class="header-margin" />
-<div class="body-container">
+<main class="main-container" in:blur={{ duration: 250, delay: 50 }} out:blur={{ duration: 250 }}>
   {#key data.currentRoute}
-    <main
-      class="main-container"
-      in:blur={{ duration: 250, delay: 50 }}
-      out:blur={{ duration: 250 }}
-    >
-      <slot />
-    </main>
+    <slot />
   {/key}
-</div>
+</main>
 <SiteFooter />
 
 <style>
   .header-margin {
     height: 8rem;
   }
-  .body-container {
-    margin: 1rem 10%;
-    display: grid;
-    grid-template-columns: 70% 1fr;
-    column-gap: 3rem;
-  }
   .main-container {
-    width: 90%;
-    margin: auto;
+    margin: 0 20%;
   }
   @media (max-width: 1024px) {
-    .body-container {
-      margin: 1rem 4%;
-      grid-template-columns: 1fr;
-    }
     .main-container {
-      width: 85%;
+      margin: 0 5%;
     }
   }
 </style>

@@ -1,5 +1,4 @@
 <script>
-  import { base } from "$app/paths";
   import NewItemIcon from "@/components/NewItemIcon.svelte";
 </script>
 
