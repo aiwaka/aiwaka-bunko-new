@@ -7,6 +7,8 @@
   import SiteHeader from "@/components/SiteHeader.svelte";
   import { beforeNavigate } from "$app/navigation";
   import Analytics from "@/components/analytics/Analytics.svelte";
+  import { browser } from "$app/environment";
+  import { onAuthStateChanged } from "firebase/auth";
 
   /**
    * ヘッダのナビゲーションリストに渡すためのデータ.
@@ -29,6 +31,25 @@
 
   export let data: LayoutData;
 
+  $: pageList = noLoginPageList;
+  if (browser) {
+    // NOTE: `auth`はクライアント側で定義されなければならないらしい（最初にimportするとエラーが出る）.
+    // そのため, `browser`が`true`になってから非同期で読み込む.
+    import("$lib/firebase").then((authData) => {
+      const auth = authData.auth;
+      // DEBUG: log
+      console.log(auth);
+      onAuthStateChanged(auth, (user) => {
+        console.log("auth state changed", user);
+        if (user === null) {
+          pageList = noLoginPageList;
+        } else {
+          pageList = loginPageList;
+        }
+      });
+    });
+  }
+
   beforeNavigate((navigation) => {
     console.log(navigation.to);
   });
@@ -50,7 +71,7 @@
   {/if}
 </svelte:head>
 
-<SiteHeader navLinkList={noLoginPageList} />
+<SiteHeader navLinkList={pageList} />
 <div class="header-margin" />
 <main class="main-container" in:blur={{ duration: 250, delay: 50 }} out:blur={{ duration: 250 }}>
   {#key data.currentRoute}
