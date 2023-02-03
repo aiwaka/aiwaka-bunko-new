@@ -8,6 +8,8 @@
   /* --current-page-link-color: rgb(172, 255, 244); */
   --current-page-link-color: rgb(100, 200, 255);
   --page-link-hover-color: rgb(100, 200, 255);
+  --favorite-link-color: rgba(255, 166, 0, 0.3);
+  --favorite-hover-link-color: rgba(255, 166, 0, 0.6);
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -16,6 +18,8 @@
     --main-bg-color: rgba(3, 18, 64, 1.0);
     --current-page-link-color: rgba(255,210,0,1);
     --page-link-hover-color: rgb(255, 240, 174);
+    --favorite-link-color: rgba(173, 216, 230, 0.3);
+    --favorite-hover-link-color: rgba(173, 216, 230, 0.6);
   }
 }
 
@@ -128,10 +132,9 @@ img:not([alt]) {
 
 h2 {
   margin-top: 2rem;
-
-  &:first-child {
-    margin-top: 0;
-  }
+}
+h2:first-child {
+  margin-top: 0;
 }
 
 h3::before {
