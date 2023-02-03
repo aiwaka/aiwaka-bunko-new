@@ -43,9 +43,10 @@
     });
   }
 
-  beforeNavigate((navigation) => {
-    console.log(navigation.to);
-  });
+  // TODO: ここで認証を確認
+  // beforeNavigate((navigation) => {
+  //   console.log(navigation.to);
+  // });
 </script>
 
 <!-- <Analytics /> -->

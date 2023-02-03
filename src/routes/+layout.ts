@@ -6,7 +6,6 @@ export const trailingSlash = "always";
 export const load: LayoutLoad = ({ url, route }) => {
   const currentRoute = url.pathname;
 
-  console.log(route);
   return {
     currentRoute,
   };
