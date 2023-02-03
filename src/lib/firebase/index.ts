@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAuth, type User } from "firebase/auth";
@@ -16,7 +15,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
-const analytics = getAnalytics(firebaseApp);
+// const analytics = getAnalytics(firebaseApp);
 const db = getFirestore(firebaseApp);
 const storage = getStorage(firebaseApp);
 const auth = getAuth(firebaseApp);
@@ -32,4 +31,4 @@ export function getCurrentUser(): Promise<User | null> {
   });
 }
 
-export { firebaseApp, analytics, db, storage, auth };
+export { firebaseApp, db, storage, auth };

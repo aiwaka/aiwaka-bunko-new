@@ -6,9 +6,9 @@
   import SiteFooter from "@/components/SiteFooter.svelte";
   import SiteHeader from "@/components/SiteHeader.svelte";
   import { beforeNavigate } from "$app/navigation";
-  import Analytics from "@/components/analytics/Analytics.svelte";
   import { browser } from "$app/environment";
   import { onAuthStateChanged } from "firebase/auth";
+  import { auth } from "@/lib/firebase";
 
   /**
    * ヘッダのナビゲーションリストに渡すためのデータ.
@@ -33,20 +33,12 @@
 
   $: pageList = noLoginPageList;
   if (browser) {
-    // NOTE: `auth`はクライアント側で定義されなければならないらしい（最初にimportするとエラーが出る）.
-    // そのため, `browser`が`true`になってから非同期で読み込む.
-    import("$lib/firebase").then((authData) => {
-      const auth = authData.auth;
-      // DEBUG: log
-      console.log(auth);
-      onAuthStateChanged(auth, (user) => {
-        console.log("auth state changed", user);
-        if (user === null) {
-          pageList = noLoginPageList;
-        } else {
-          pageList = loginPageList;
-        }
-      });
+    onAuthStateChanged(auth, (user) => {
+      if (user === null) {
+        pageList = noLoginPageList;
+      } else {
+        pageList = loginPageList;
+      }
     });
   }
 
@@ -55,7 +47,7 @@
   });
 </script>
 
-<Analytics />
+<!-- <Analytics /> -->
 
 <svelte:head>
   <link rel="stylesheet" href={`${base}/style/main.css`} />
