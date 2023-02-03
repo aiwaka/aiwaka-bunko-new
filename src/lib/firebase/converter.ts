@@ -1,7 +1,7 @@
 import type { QueryDocumentSnapshot, SnapshotOptions } from "@firebase/firestore";
 import { DocumentRequest } from "$lib/request";
+import { DocumentContent } from "$lib/doc";
 import { FavoriteDocumentRelation } from "$lib/favorite";
-import type { DocumentContent } from "../doc";
 
 export const documentConverter = {
   toFirestore: (document: DocumentContent) => {
