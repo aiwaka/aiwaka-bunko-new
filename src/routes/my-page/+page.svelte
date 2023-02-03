@@ -12,14 +12,14 @@
   } from "$lib/request";
   import type { DocumentContent } from "$lib/doc";
   import { setAllFavDocByUser } from "$lib/favorite";
-  import { setPreviousDate } from "$lib/utils";
 
   import ButtonUi from "@/components/ButtonUi.svelte";
+  import ContentsListItem from "@/components/ContentsListItem.svelte";
+  import RequestBudge from "@/components/RequestBudge.svelte";
 
   $: errorMessage = "";
   let favDocList: DocumentContent[];
   $: favDocList = [];
-  $: lastWeekDate = new Date();
   $: loginUserName = "";
   let requestList: DocumentRequest[];
   $: requestList = [];
@@ -27,14 +27,15 @@
   // components: { RequestBudgeVue, ContentsListItemVue, ButtonUiVue },
 
   onMount(async () => {
-    setPreviousDate(lastWeekDate);
     const userName = await getUserName();
     if (userName) {
       loginUserName = userName;
       // お気に入り情報を取得
       await setAllFavDocByUser(favDocList);
+      favDocList = favDocList;
       // リクエスト情報を取得
       await setAllRequestByUser(requestList);
+      requestList = requestList;
     }
   });
 
@@ -49,33 +50,31 @@
         });
     }
   };
-  const deleteRequest = async (id: string) => {
-    deleteRequestInterface(id, requestList);
+  const deleteRequest = async (ev: CustomEvent<{ id: string }>) => {
+    deleteRequestInterface(ev.detail.id, requestList);
   };
-  const modifyRequest = async (id: string) => {
-    modifyRequestInterface(id, requestList);
+  const modifyRequest = async (ev: CustomEvent<{ id: string }>) => {
+    modifyRequestInterface(ev.detail.id, requestList);
   };
 </script>
 
-<h1>{{ loginUserName }}</h1>
+<h1>{loginUserName}</h1>
 <h2>お気に入り文書一覧</h2>
 <div class="favorite-doc-container">
   {#each favDocList as doc (doc.urlStr)}
-    {doc}
+    <ContentsListItem item={doc} isFavorite={true} />
   {/each}
-  <!-- <contents-list-item-vue
-      v-for="doc in favDocList"
-      :key="doc.urlStr"
-      :item="doc"
-      :favorite="true"
-      :last-week-date="lastWeekDate"
-    /> -->
 </div>
 <!-- TODO: 自分のページにはソート機能がほしいかも -->
 <h2>リクエスト一覧</h2>
 <div class="request-container">
-  {#each requestList as req (req.id)}
-    {req}
+  {#each requestList as request (request.id)}
+    <RequestBudge
+      {request}
+      showDocTitle={true}
+      on:modify-request={modifyRequest}
+      on:delete-request={deleteRequest}
+    />
   {/each}
   <!-- <request-budge-vue
       v-for="req in requestList"

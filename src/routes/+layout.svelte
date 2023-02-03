@@ -33,6 +33,7 @@
 
   $: pageList = noLoginPageList;
   if (browser) {
+    // 認証状態の変化に応じてpageListの中身を変更するリスナーを設定する
     onAuthStateChanged(auth, (user) => {
       if (user === null) {
         pageList = noLoginPageList;
