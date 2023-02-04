@@ -18,14 +18,12 @@
   });
 </script>
 
-<div class="contents-home">
-  <h1>コンテンツ一覧</h1>
-  <p>{allDocumentNum}件の文書があります。</p>
-  <div class="documents-list-container">
-    {#each documentList as doc (doc.id)}
-      <ContentsListItem item={doc} isFavorite={favDocIdList.includes(doc.urlStr)} />
-    {/each}
-  </div>
+<h1>コンテンツ一覧</h1>
+<p>{allDocumentNum}件の文書があります。</p>
+<div class="documents-list-container">
+  {#each documentList as doc (doc.id)}
+    <ContentsListItem item={doc} isFavorite={favDocIdList.includes(doc.urlStr)} />
+  {/each}
 </div>
 
 <style>

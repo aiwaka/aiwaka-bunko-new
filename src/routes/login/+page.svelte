@@ -54,33 +54,31 @@
   };
 </script>
 
-<div class="login-page">
-  {#if !loggedIn}
-    <div class="login-form">
-      <label for="login-email-input">e-mail</label>
-      <input id="login-email-input" placeholder="name" bind:value={emailInput} />
-      <label for="login-password-input">password</label>
-      <input
-        id="login-password-input"
-        placeholder="password"
-        type="password"
-        bind:value={passwordInput}
-      />
-      <button class="login-button" on:click={login}>Login</button>
-    </div>
-  {:else}
-    <div class="login-name-display">
-      {loginUserName}としてログインしています。
-      <button on:click={logout}>Logout</button>
-    </div>
-  {/if}
+{#if !loggedIn}
+  <div class="login-form">
+    <label for="login-email-input">e-mail</label>
+    <input id="login-email-input" placeholder="name" bind:value={emailInput} />
+    <label for="login-password-input">password</label>
+    <input
+      id="login-password-input"
+      placeholder="password"
+      type="password"
+      bind:value={passwordInput}
+    />
+    <button class="login-button" on:click={login}>Login</button>
+  </div>
+{:else}
+  <div class="login-name-display">
+    {loginUserName}としてログインしています。
+    <button on:click={logout}>Logout</button>
+  </div>
+{/if}
 
-  {#if errorMessage}
-    <div class="error-msg">
-      {errorMessage}
-    </div>
-  {/if}
-</div>
+{#if errorMessage}
+  <div class="error-msg">
+    {errorMessage}
+  </div>
+{/if}
 
 <style>
   .login-form {

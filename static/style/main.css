@@ -10,6 +10,8 @@
   --page-link-hover-color: rgb(100, 200, 255);
   --favorite-link-color: rgba(255, 166, 0, 0.3);
   --favorite-hover-link-color: rgba(255, 166, 0, 0.6);
+  --active-pin-color: orange;
+  --non-active-pin-color: gray;
 }
 @media (prefers-color-scheme: dark) {
   :root {
