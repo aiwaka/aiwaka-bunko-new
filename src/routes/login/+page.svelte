@@ -5,6 +5,7 @@
   import { auth } from "$lib/firebase";
   import { onMount } from "svelte";
   import { getUserName } from "@/lib/user";
+  import ButtonUi from "@/components/ButtonUi.svelte";
 
   $: errorMessage = "";
   $: loggedIn = false;
@@ -65,12 +66,14 @@
       type="password"
       bind:value={passwordInput}
     />
-    <button class="login-button" on:click={login}>Login</button>
+    <div class="login-button">
+      <ButtonUi on:click={login}>Login</ButtonUi>
+    </div>
   </div>
 {:else}
   <div class="login-name-display">
     {loginUserName}としてログインしています。
-    <button on:click={logout}>Logout</button>
+    <ButtonUi on:click={logout}>Logout</ButtonUi>
   </div>
 {/if}
 
@@ -98,8 +101,5 @@
   }
   .login-button {
     grid-column: -2 / -1;
-  }
-  button {
-    border: 1px solid var(--main-font-color);
   }
 </style>

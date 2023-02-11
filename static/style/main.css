@@ -117,17 +117,15 @@ picture {
   max-width: 100%;
   display: block;
 }
-label,
 input,
 textarea,
 select {
   font: inherit;
-  background-color: var(--main-bg-color);
-  color: var(--main-font-color);
 }
 img:not([alt]) {
   filter: blur(10px);
 }
+
 #app {
   min-height: 100vh;
 }
