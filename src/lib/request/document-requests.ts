@@ -1,7 +1,7 @@
 import type { Timestamp } from "@firebase/firestore";
 
 const dayStr = ["日", "月", "火", "水", "木", "金", "土"];
-export const requestTypeStr = ["意見", "修正依頼", "GitHubリポジトリ参加依頼", "その他"];
+export const requestTypeStrList = ["意見", "修正依頼", "GitHubリポジトリ参加依頼", "その他"];
 
 export type DocumentRequestWithoutId = Omit<
   DocumentRequest,
@@ -63,6 +63,6 @@ export class DocumentRequest {
     return `${hour}時${minute}分`;
   }
   public getTypeStr(): string {
-    return requestTypeStr[this.requestType];
+    return requestTypeStrList[this.requestType];
   }
 }

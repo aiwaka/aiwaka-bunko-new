@@ -11,7 +11,7 @@ const config = {
   kit: {
     // adapter: adapter(),
     adapter: staticAdapter({
-      fallback: null,
+      fallback: "200.html",
       // pages: "dist",
       precompress: true,
     }),

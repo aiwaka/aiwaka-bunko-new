@@ -1,5 +1,5 @@
 import {
-  requestTypeStr,
+  requestTypeStrList,
   DocumentRequest,
   type DocumentRequestWithoutId,
 } from "./document-requests";
@@ -12,7 +12,7 @@ import {
 } from "./request-record-operations";
 
 export {
-  requestTypeStr,
+  requestTypeStrList,
   DocumentRequest,
   DocumentRequestWithoutId,
   createRequestToFirestore,
