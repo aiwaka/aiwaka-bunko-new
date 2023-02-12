@@ -88,8 +88,10 @@
   };
 </script>
 
-<div class="register-page">
-  {#if !loggedIn}
+{#await getUserName()}
+  <p>Loading...</p>
+{:then userName}
+  {#if !userName}
     <div class="register-form">
       <fieldset class:error-exist={errorMessage}>
         <label for="form-name">ハンドルネーム</label>
@@ -116,7 +118,12 @@
   {:else}
     <p>ログイン済みです。</p>
   {/if}
-</div>
+{:catch error}
+  <div class="error-msg error-exist">
+    <p>ユーザーの読み込み中にエラーが発生しました。</p>
+    <p>{error}</p>
+  </div>
+{/await}
 
 <style>
   .error-exist {
