@@ -30,6 +30,8 @@
   .documents-list-container {
     display: grid;
     grid-template-columns: repeat(3, 3fr);
+    column-gap: 1rem;
+    row-gap: 1rem;
     margin: 2rem 3%;
   }
   @media (max-width: 1024px) {

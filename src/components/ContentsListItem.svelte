@@ -26,33 +26,31 @@
 
 <style>
   .document-item {
-    border: 2px solid #777777;
-    border-radius: 7px;
+    border: 3px ridge #777;
+    border-radius: 9px;
     backdrop-filter: blur(1.5rem);
-    margin: 1rem 1.6rem;
+    margin: 0;
+    height: 100%;
     padding: 1rem 1.8rem;
   }
   .item-title {
-    font-size: 1.8rem;
+    font-size: 1.3rem;
   }
   .item-update {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     color: #888;
     display: flex;
     column-gap: 1rem;
     flex-wrap: wrap;
   }
   .favorite-item {
-    background-color: --favorite-link-color;
+    background-color: var(--favorite-link-color);
   }
   .favorite-item:hover {
-    background-color: --favorite-hover-link-color;
-  }
-  .document-item:first-child {
-    margin-top: 0;
+    background-color: var(--favorite-hover-link-color);
   }
   .document-item:hover {
     backdrop-filter: blur(0);
-    background-color: rgba(100, 100, 255, 0.2);
+    /* background-color: rgba(100, 100, 255, 0.2); */
   }
 </style>

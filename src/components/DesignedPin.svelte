@@ -9,7 +9,7 @@
     />
   </symbol>
 </svg>
-<button on:click>
+<button class="pin-button" on:click>
   <div class="designed-pin">
     <div class="pin" class:active-pin={active}>
       <svg class="star-icon" class:active-pin={active}>
@@ -20,11 +20,12 @@
 </button>
 
 <style>
-  * {
-    margin: 0px;
-    padding: 0px;
+  .pin-button {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background-color: transparent;
   }
-
   .designed-pin {
     position: relative;
     width: 40px;

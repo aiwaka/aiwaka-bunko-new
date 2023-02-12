@@ -6,81 +6,61 @@
 
   export let request: DocumentRequest;
   export let showDocTitle: boolean;
-  // emits: ["delete-request", "modify-request"],
 
+  // リクエストのステータスによって変化させる変数を処理
   $: statusMessage = "";
+  $: budgeBoxShadowStyle = "";
   $: {
     let message = "";
+    // `box-shadow`プロパティの値を動的に生成するが, 色のみ変化させるのでそれ以外はハードコーディングする.
+    const shadowStyleTemplate = "inset 0px 0px 1rem 0.5rem";
     switch (request.status) {
       case 0:
         message = "以下の内容でリクエストを送りました。";
         break;
       case 1:
         message = "リクエストが処理されました。";
+        budgeBoxShadowStyle = `${shadowStyleTemplate} rgba(76, 248, 49, 0.6)`;
         break;
       case 2:
         message = "リクエストが拒否されました。";
+        budgeBoxShadowStyle = `${shadowStyleTemplate} rgba(249, 34, 34, 0.6)`;
         break;
       default:
+        budgeBoxShadowStyle = `${shadowStyleTemplate} rgba(35, 98, 245, 0.6)`;
         message =
           "例外状態になっています。管理者に問い合わせてください。" + `コード：${request.status}`;
+        break;
     }
     statusMessage = message;
   }
-  $: budgeColorStyle = "";
-  $: {
-    switch (request.status) {
-      case 1:
-        budgeColorStyle = "rgba(76, 248, 49, 0.2)";
-        break;
-      case 2:
-        budgeColorStyle = "rgba(249, 34, 34, 0.2)";
-        break;
-      default:
-        budgeColorStyle = "rgba(35, 98, 245, 0.2)";
-        break;
-    }
-  }
 
   const modifyRequest = () => {
-    // context.emit("modify-request", props.request.id);
     dispatch("modify-request", { id: request.id });
   };
   const deleteRequest = () => {
-    // context.emit("delete-request", props.request.id);
     dispatch("delete-request", { id: request.id });
   };
-
-  // $: statusClass = "on-hold";
-  // $: {
-  //   switch (request.status) {
-  //     case 1:
-  //       statusClass = "accepted";
-  //       break;
-  //     case 2:
-  //       statusClass = "rejected";
-  //       break;
-  //     default:
-  //       statusClass = "on-hold";
-  //   }
-  // }
 </script>
 
-<div class="request-budge" style:background-color={budgeColorStyle}>
+<div class="request-budge" style:box-shadow={budgeBoxShadowStyle}>
   {#if showDocTitle}
-    <div class="doc-title">
+    <div class="doc-name">
       {request.targetName}
     </div>
+    <div class="split-line" />
   {/if}
+  <div class="request-message">
+    <span>{statusMessage}</span>
+  </div>
+  <div class="split-line" />
   <div class="status-message">
     <span>{request.getTypeStr()}</span>
     {#if request.requestType !== 2}
-      <span>：{statusMessage}</span>
+      <span>：{request.message}</span>
     {/if}
   </div>
-  <div class="request-message">
-    {request.message}
-  </div>
+
   <div class="button-container">
     {#if request.status === 0}
       <ButtonUi on:click={modifyRequest}>修正する</ButtonUi>
@@ -92,25 +72,23 @@
 </div>
 
 <style>
+  .split-line {
+    height: 0;
+    border-top: 1px solid #777;
+  }
   .request-budge {
+    margin: 0;
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(0, 0, 0, 0.4);
+    row-gap: 0.6rem;
+    border: 3px ridge #777;
     border-radius: 10px;
+    background-color: var(--main-bg-color);
     padding: 0.8rem 1.6rem;
-    margin: 0.7rem 1rem;
-    width: 30rem;
   }
-  .doc-title {
+  .doc-name {
     font-weight: 800;
     font-size: larger;
-  }
-  .status-message {
-    margin: 0.2rem auto;
-  }
-
-  .request-message {
-    margin: 0.3 auto;
   }
 
   .button-container {
@@ -134,13 +112,4 @@
         }
       } */
   }
-  /* .request-budge.on-hold {
-    background-color: rgba(35, 98, 245, 0.2);
-  }
-  .request-budge.accepted {
-    background-color: rgba(76, 248, 49, 0.2);
-  }
-  .request-budge.rejected {
-    background-color: rgba(249, 34, 34, 0.2);
-  } */
 </style>

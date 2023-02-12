@@ -24,18 +24,19 @@
   let requestList: DocumentRequest[];
   $: requestList = [];
 
-  // components: { RequestBudgeVue, ContentsListItemVue, ButtonUiVue },
-
   onMount(async () => {
     const userName = await getUserName();
     if (userName) {
       loginUserName = userName;
       // お気に入り情報を取得
-      await setAllFavDocByUser(favDocList);
-      favDocList = favDocList;
+      setAllFavDocByUser(favDocList).then(() => {
+        // Svelteのリアクティブ変数のために再代入処理
+        favDocList = favDocList;
+      });
       // リクエスト情報を取得
-      await setAllRequestByUser(requestList);
-      requestList = requestList;
+      setAllRequestByUser(requestList).then(() => {
+        requestList = requestList;
+      });
     }
   });
 
@@ -51,10 +52,10 @@
     }
   };
   const deleteRequest = async (ev: CustomEvent<{ id: string }>) => {
-    deleteRequestInterface(ev.detail.id, requestList);
+    await deleteRequestInterface(ev.detail.id, requestList);
   };
   const modifyRequest = async (ev: CustomEvent<{ id: string }>) => {
-    modifyRequestInterface(ev.detail.id, requestList);
+    await modifyRequestInterface(ev.detail.id, requestList);
   };
 </script>
 
@@ -76,24 +77,20 @@
       on:delete-request={deleteRequest}
     />
   {/each}
-  <!-- <request-budge-vue
-      v-for="req in requestList"
-      :key="req.id"
-      :request="req"
-      :show-doc-title="true"
-      @modify-request="modifyRequest"
-      @delete-request="deleteRequest"
-    /> -->
 </div>
 
 <h2>ログアウト</h2>
 <ButtonUi on:click={logout}>ログアウト</ButtonUi>
 
+<div class="foot-blank" />
+
 <style>
   .favorite-doc-container {
     display: grid;
     grid-template-columns: repeat(3, 3fr);
-    margin: 2rem 3%;
+    column-gap: 1rem;
+    row-gap: 1rem;
+    margin: 2rem 2%;
   }
   @media (max-width: 1024px) {
     .favorite-doc-container {
@@ -103,11 +100,17 @@
 
   .request-container {
     display: grid;
-    grid-template-columns: repeat(3, 3fr);
+    grid-template-columns: repeat(2, 3fr);
+    column-gap: 1rem;
+    row-gap: 1rem;
+    margin: 2rem 2%;
   }
   @media (max-width: 1024px) {
     .request-container {
       grid-template-columns: 1fr;
     }
+  }
+  .foot-blank {
+    margin: 4rem auto;
   }
 </style>
