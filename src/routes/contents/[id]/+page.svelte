@@ -226,7 +226,6 @@
     grid-template-columns: 8rem 1fr;
     row-gap: 1.5rem;
     column-gap: 0.7rem;
-    /* width: 97%; */
     margin: 2rem auto;
     padding: 1.6rem 2rem;
   }
@@ -238,6 +237,8 @@
 
   select,
   input {
+    color: inherit;
+    background-color: inherit;
     background-color: transparent;
     border: 1px solid #7f7f7f;
     transition: ease-in-out 0.2s;

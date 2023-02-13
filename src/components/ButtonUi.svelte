@@ -9,6 +9,8 @@
 <style>
   button {
     margin: 0.3rem 0.5rem;
+    color: var(--main-font-color);
+    background-color: var(--main-bg-color);
     border: 1px solid var(--main-font-color);
     border-radius: 4px;
     transition: 0.25s ease-out;
