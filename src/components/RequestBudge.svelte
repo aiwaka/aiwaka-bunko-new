@@ -2,6 +2,10 @@
   import type { DocumentRequest } from "$lib/request";
   import { createEventDispatcher } from "svelte";
   import ButtonUi from "./ButtonUi.svelte";
+  import Markdown from "svelte-exmarkdown";
+  import rehypeKatex from "rehype-katex";
+  import remarkMath from "remark-math";
+
   const dispatch = createEventDispatcher();
 
   export let request: DocumentRequest;
@@ -44,6 +48,16 @@
   };
 </script>
 
+<!-- katexをテキストに適用するための処理 -->
+<svelte:head>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css"
+    integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0"
+    crossorigin="anonymous"
+  />
+</svelte:head>
+
 <div class="request-budge" style:box-shadow={budgeBoxShadowStyle}>
   {#if showDocTitle}
     <div class="doc-name">
@@ -56,9 +70,13 @@
   </div>
   <div class="split-line" />
   <div class="status-message">
-    <span>{request.getTypeStr()}</span>
     {#if request.requestType !== 2}
-      <span>：{request.message}</span>
+      <Markdown
+        md={request.getTypeStr() + "：" + request.message}
+        plugins={[{ remarkPlugin: remarkMath }, { rehypePlugin: rehypeKatex }]}
+      />
+    {:else}
+      <p>{request.getTypeStr()}</p>
     {/if}
   </div>
 
