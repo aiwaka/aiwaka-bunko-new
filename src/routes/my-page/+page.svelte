@@ -6,16 +6,16 @@
   import { getUserName } from "$lib/user";
   import {
     type DocumentRequest,
-    deleteRequestInterface,
+    deleteRequestFromList,
     setAllRequestByUser,
-    modifyRequestInterface,
+    modifyRequestInList,
   } from "$lib/request";
   import type { DocumentContent } from "$lib/doc";
   import { setAllFavDocByUser } from "$lib/favorite";
 
   import ButtonUi from "@/components/ButtonUi.svelte";
-  import ContentsListItem from "@/components/ContentsListItem.svelte";
-  import RequestBudge from "@/components/RequestBudge.svelte";
+  import ContentsListContainer from "@/components/ContentsListContainer.svelte";
+  import RequestContainer from "@/components/RequestContainer.svelte";
 
   $: errorMessage = "";
   let favDocList: DocumentContent[];
@@ -52,33 +52,30 @@
     }
   };
   const deleteRequest = async (ev: CustomEvent<{ id: string }>) => {
-    await deleteRequestInterface(ev.detail.id, requestList);
+    requestList = await deleteRequestFromList(ev.detail.id, requestList);
   };
   const modifyRequest = async (ev: CustomEvent<{ id: string }>) => {
-    await modifyRequestInterface(ev.detail.id, requestList);
+    await modifyRequestInList(ev.detail.id, requestList);
+    requestList = requestList;
   };
 </script>
 
 <h1>{loginUserName}</h1>
+
 <h2>お気に入り文書一覧</h2>
-<div class="favorite-doc-container">
-  {#each favDocList as doc (doc.urlStr)}
-    <ContentsListItem item={doc} isFavorite={true} />
-  {/each}
-</div>
+<ContentsListContainer documentList={favDocList} favList={"all"} />
+
 <!-- TODO: 自分のページにはソート機能がほしいかも -->
 <h2>リクエスト一覧</h2>
-<!-- TODO: リクエストと文書コンテナをコンポーネントとして切り出す -->
-<div class="request-container">
-  {#each requestList as request (request.id)}
-    <RequestBudge
-      {request}
-      showDocTitle={true}
-      on:modify-request={modifyRequest}
-      on:delete-request={deleteRequest}
-    />
-  {/each}
-</div>
+<RequestContainer
+  {requestList}
+  showDocTitle={true}
+  on:modify-request={modifyRequest}
+  on:delete-request={deleteRequest}
+/>
+{#if errorMessage}
+  <div class="error-message">{errorMessage}</div>
+{/if}
 
 <h2>ログアウト</h2>
 <ButtonUi on:click={logout}>ログアウト</ButtonUi>
@@ -86,30 +83,9 @@
 <div class="foot-blank" />
 
 <style>
-  .favorite-doc-container {
-    display: grid;
-    grid-template-columns: repeat(3, 3fr);
-    column-gap: 1rem;
-    row-gap: 1rem;
-    margin: 2rem 2%;
-  }
-  @media (max-width: 1024px) {
-    .favorite-doc-container {
-      grid-template-columns: repeat(2, 2fr);
-    }
-  }
-
-  .request-container {
-    display: grid;
-    grid-template-columns: repeat(2, 3fr);
-    column-gap: 1rem;
-    row-gap: 1rem;
-    margin: 2rem 2%;
-  }
-  @media (max-width: 1024px) {
-    .request-container {
-      grid-template-columns: 1fr;
-    }
+  .error-message {
+    color: red;
+    border: 1px solid red;
   }
   .foot-blank {
     margin: 4rem auto;

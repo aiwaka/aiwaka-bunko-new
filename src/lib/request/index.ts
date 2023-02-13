@@ -7,8 +7,8 @@ import {
   createRequestToFirestore,
   setAllRequestByUser,
   setRequestByUserAndTarget,
-  modifyRequestInterface,
-  deleteRequestInterface,
+  modifyRequestInList,
+  deleteRequestFromList,
 } from "./request-record-operations";
 
 export {
@@ -18,6 +18,6 @@ export {
   createRequestToFirestore,
   setAllRequestByUser,
   setRequestByUserAndTarget,
-  modifyRequestInterface,
-  deleteRequestInterface,
+  modifyRequestInList,
+  deleteRequestFromList,
 };

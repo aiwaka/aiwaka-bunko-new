@@ -2,7 +2,7 @@
   import ButtonUi from "@/components/ButtonUi.svelte";
   import DesignedPin from "@/components/DesignedPin.svelte";
   import NewItemIcon from "@/components/NewItemIcon.svelte";
-  import RequestBudge from "@/components/RequestBudge.svelte";
+  import RequestContainer from "@/components/RequestContainer.svelte";
   import { getContent, type DocumentContent } from "@/lib/doc";
   import {
     createFavoriteToFirestore,
@@ -11,8 +11,8 @@
   } from "@/lib/favorite";
   import {
     createRequestToFirestore,
-    deleteRequestInterface,
-    modifyRequestInterface,
+    deleteRequestFromList,
+    modifyRequestInList,
     setRequestByUserAndTarget,
     type DocumentRequest,
     requestTypeStrList,
@@ -96,13 +96,11 @@
   };
 
   const modifyRequest = async (ev: CustomEvent<{ id: string }>) => {
-    await modifyRequestInterface(ev.detail.id, requestList);
+    await modifyRequestInList(ev.detail.id, requestList);
     requestList = requestList;
   };
   const deleteRequest = async (ev: CustomEvent<{ id: string }>) => {
-    await deleteRequestInterface(ev.detail.id, requestList);
-    // FIXME: 取り消しが即座に反映されない
-    requestList = requestList;
+    requestList = await deleteRequestFromList(ev.detail.id, requestList);
   };
 
   // 一つでもあればfavに入っているので, 作るときはひとつ作り, 消すときはすべて消すようにする.
@@ -193,16 +191,12 @@
   </div>
   {#if requestList.length > 0}
     <h3>これまでのリクエスト一覧</h3>
-    <div class="request-container">
-      {#each requestList as request (request.id)}
-        <RequestBudge
-          {request}
-          showDocTitle={false}
-          on:modify-request={modifyRequest}
-          on:delete-request={deleteRequest}
-        />
-      {/each}
-    </div>
+    <RequestContainer
+      {requestList}
+      showDocTitle={false}
+      on:modify-request={modifyRequest}
+      on:delete-request={deleteRequest}
+    />
   {/if}
 {/if}
 
@@ -272,9 +266,5 @@
     .add-button {
       grid-column-start: 1;
     }
-  }
-  .request-container {
-    display: grid;
-    grid-template-columns: repeat(3, 3fr);
   }
 </style>
