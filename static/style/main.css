@@ -20,8 +20,8 @@
     --main-bg-color: rgba(3, 18, 64, 1.0);
     --current-page-link-color: rgba(255,210,0,1);
     --page-link-hover-color: rgb(255, 240, 174);
-    --favorite-link-color: rgba(173, 216, 230, 0.3);
-    --favorite-hover-link-color: rgba(173, 216, 230, 0.6);
+    --favorite-link-color: rgba(204, 230, 173, 0.3);
+    --favorite-hover-link-color: rgba(204, 230, 173, 0.6);
   }
 }
 
@@ -59,11 +59,6 @@ html {
     scroll-padding-top: 13rem;
   }
 }
-@media (max-width: 375px) {
-  html {
-    font-size: 4.26vw; /* 16/375*100 */
-  }
-}
 
 /* Set core body defaults */
 body {
@@ -91,6 +86,11 @@ body::before {
   background-position: center 70%;
   background-size: cover;
   transition: background-image 1s ease-in-out;
+}
+@media (prefers-color-scheme: dark) {
+  body::before {
+    background-image: url("../img/blue_2_dark.png");
+  }
 }
 @media (max-width: 1024px) {
   body::before {

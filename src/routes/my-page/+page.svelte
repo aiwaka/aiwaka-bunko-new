@@ -6,16 +6,16 @@
   import { getUserName } from "$lib/user";
   import {
     type DocumentRequest,
-    deleteRequestInterface,
+    deleteRequestFromList,
     setAllRequestByUser,
-    modifyRequestInterface,
+    modifyRequestInList,
   } from "$lib/request";
   import type { DocumentContent } from "$lib/doc";
   import { setAllFavDocByUser } from "$lib/favorite";
 
   import ButtonUi from "@/components/ButtonUi.svelte";
-  import ContentsListItem from "@/components/ContentsListItem.svelte";
-  import RequestBudge from "@/components/RequestBudge.svelte";
+  import ContentsListContainer from "@/components/ContentsListContainer.svelte";
+  import RequestContainer from "@/components/RequestContainer.svelte";
 
   $: errorMessage = "";
   let favDocList: DocumentContent[];
@@ -24,18 +24,19 @@
   let requestList: DocumentRequest[];
   $: requestList = [];
 
-  // components: { RequestBudgeVue, ContentsListItemVue, ButtonUiVue },
-
   onMount(async () => {
     const userName = await getUserName();
     if (userName) {
       loginUserName = userName;
       // お気に入り情報を取得
-      await setAllFavDocByUser(favDocList);
-      favDocList = favDocList;
+      setAllFavDocByUser(favDocList).then(() => {
+        // Svelteのリアクティブ変数のために再代入処理
+        favDocList = favDocList;
+      });
       // リクエスト情報を取得
-      await setAllRequestByUser(requestList);
-      requestList = requestList;
+      setAllRequestByUser(requestList).then(() => {
+        requestList = requestList;
+      });
     }
   });
 
@@ -51,63 +52,42 @@
     }
   };
   const deleteRequest = async (ev: CustomEvent<{ id: string }>) => {
-    deleteRequestInterface(ev.detail.id, requestList);
+    requestList = await deleteRequestFromList(ev.detail.id, requestList);
   };
   const modifyRequest = async (ev: CustomEvent<{ id: string }>) => {
-    modifyRequestInterface(ev.detail.id, requestList);
+    await modifyRequestInList(ev.detail.id, requestList);
+    requestList = requestList;
   };
 </script>
 
 <h1>{loginUserName}</h1>
+
 <h2>お気に入り文書一覧</h2>
-<div class="favorite-doc-container">
-  {#each favDocList as doc (doc.urlStr)}
-    <ContentsListItem item={doc} isFavorite={true} />
-  {/each}
-</div>
+<ContentsListContainer documentList={favDocList} favList={"all"} />
+
 <!-- TODO: 自分のページにはソート機能がほしいかも -->
 <h2>リクエスト一覧</h2>
-<div class="request-container">
-  {#each requestList as request (request.id)}
-    <RequestBudge
-      {request}
-      showDocTitle={true}
-      on:modify-request={modifyRequest}
-      on:delete-request={deleteRequest}
-    />
-  {/each}
-  <!-- <request-budge-vue
-      v-for="req in requestList"
-      :key="req.id"
-      :request="req"
-      :show-doc-title="true"
-      @modify-request="modifyRequest"
-      @delete-request="deleteRequest"
-    /> -->
-</div>
+<RequestContainer
+  {requestList}
+  showDocTitle={true}
+  on:modify-request={modifyRequest}
+  on:delete-request={deleteRequest}
+/>
+{#if errorMessage}
+  <div class="error-message">{errorMessage}</div>
+{/if}
 
 <h2>ログアウト</h2>
 <ButtonUi on:click={logout}>ログアウト</ButtonUi>
 
-<style>
-  .favorite-doc-container {
-    display: grid;
-    grid-template-columns: repeat(3, 3fr);
-    margin: 2rem 3%;
-  }
-  @media (max-width: 1024px) {
-    .favorite-doc-container {
-      grid-template-columns: repeat(2, 2fr);
-    }
-  }
+<div class="foot-blank" />
 
-  .request-container {
-    display: grid;
-    grid-template-columns: repeat(3, 3fr);
+<style>
+  .error-message {
+    color: red;
+    border: 1px solid red;
   }
-  @media (max-width: 1024px) {
-    .request-container {
-      grid-template-columns: 1fr;
-    }
+  .foot-blank {
+    margin: 4rem auto;
   }
 </style>

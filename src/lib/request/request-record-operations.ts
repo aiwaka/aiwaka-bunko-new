@@ -89,21 +89,19 @@ export const setRequestByUserAndTarget = async (requestList: DocumentRequest[], 
 ///////////////
 // update
 ///////////////
-const updateRequest = async (requestId: string, newMessage: string): Promise<void | null> => {
+const updateRequestOfFirestore = async (requestId: string, newMessage: string): Promise<void> => {
   const user = await getCurrentUser();
   const uid = user?.uid;
-  if (!uid) return null;
-  await updateDoc(doc(db, "requests", requestId), {
+  if (!uid) return Promise.reject(new Error("User is not authenticated."));
+  return await updateDoc(doc(db, "requests", requestId), {
     message: newMessage,
   });
 };
-/** コンポーネント内でリストから修正するオブジェクトを探して修正する処理をまとめたもの.
- * 引数を渡すだけの最低限のコードだけで動くようにする.
- * TODO: 関数名が変だと思うので変更したい
- * @param requestId
+/** 引数に渡したリクエストを修正する.
+ * @param requestId 修正したいリクエストのid
  * @param requestList
  */
-export const modifyRequestInterface = async (requestId: string, requestList: DocumentRequest[]) => {
+export const modifyRequestInList = async (requestId: string, requestList: DocumentRequest[]) => {
   const modifyingReq = requestList.find((req) => {
     return req.id === requestId;
   });
@@ -113,8 +111,8 @@ export const modifyRequestInterface = async (requestId: string, requestList: Doc
   }
   const modifiedMessage = window.prompt("メッセージを修正してください。", modifyingReq.message);
   if (modifiedMessage !== null && modifiedMessage !== "") {
-    if (confirm("以下の内容を登録しますか？" + `\n${modifiedMessage}`)) {
-      await updateRequest(requestId, modifiedMessage);
+    if (confirm("以下の内容に修正して登録しますか？" + `\n${modifiedMessage}`)) {
+      await updateRequestOfFirestore(requestId, modifiedMessage);
       modifyingReq.message = modifiedMessage;
     }
   }
@@ -123,23 +121,32 @@ export const modifyRequestInterface = async (requestId: string, requestList: Doc
 ///////////////
 // delete
 ///////////////
-const deleteRequestFromFirestore = async (requestId: string): Promise<void | null> => {
+const deleteRequestFromFirestore = async (requestId: string) => {
   const user = await getCurrentUser();
   const uid = user?.uid;
-  if (!uid) return null;
-  await deleteDoc(doc(db, "requests", requestId));
+  if (!uid) return Promise.reject(new Error("User is not authenticated."));
+  return deleteDoc(doc(db, "requests", requestId));
 };
 /**
- * 修正と同様に消去の処理をまとめたもの.
- * @param requestId
- * @param requestList
+ * リクエストリストから指定されたidのリクエストを削除し, 新しいリストを返す
+ * @param requestId 削除したいリクエストのid
+ * @param requestList リクエストのリスト
+ * @return 新しいリスト
  */
-export const deleteRequestInterface = async (requestId: string, requestList: DocumentRequest[]) => {
+export const deleteRequestFromList = async (requestId: string, requestList: DocumentRequest[]) => {
   if (confirm("削除しますか？")) {
-    await deleteRequestFromFirestore(requestId);
-    const newList = requestList.filter((req) => {
-      return req.id !== requestId;
-    });
-    requestList = newList;
+    try {
+      // 消去が成功した場合はフィルターをかけて新しいリストを返す.
+      // それ以外はrequestListをそのまま返す.
+      await deleteRequestFromFirestore(requestId);
+      const newList = requestList.filter((req) => {
+        return req.id !== requestId;
+      });
+      return newList;
+    } catch (error) {
+      return requestList;
+    }
+  } else {
+    return requestList;
   }
 };

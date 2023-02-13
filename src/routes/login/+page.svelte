@@ -3,24 +3,12 @@
   import { goto } from "$app/navigation";
   import { signInWithEmailAndPassword, signOut } from "firebase/auth";
   import { auth } from "$lib/firebase";
-  import { onMount } from "svelte";
-  import { getUserName } from "@/lib/user";
+  import { getUserName } from "$lib/user";
   import ButtonUi from "@/components/ButtonUi.svelte";
 
   $: errorMessage = "";
-  $: loggedIn = false;
-  let loginUserName: null | string = null;
-  $: loginUserName = loginUserName;
   $: passwordInput = "";
   $: emailInput = "";
-
-  onMount(async () => {
-    const userName = await getUserName();
-    loggedIn = !!userName;
-    if (userName !== null) {
-      loginUserName = userName;
-    }
-  });
 
   const login = () => {
     signInWithEmailAndPassword(auth, emailInput, passwordInput)
@@ -55,27 +43,37 @@
   };
 </script>
 
-{#if !loggedIn}
-  <div class="login-form">
-    <label for="login-email-input">e-mail</label>
-    <input id="login-email-input" placeholder="name" bind:value={emailInput} />
-    <label for="login-password-input">password</label>
-    <input
-      id="login-password-input"
-      placeholder="password"
-      type="password"
-      bind:value={passwordInput}
-    />
-    <div class="login-button">
-      <ButtonUi on:click={login}>Login</ButtonUi>
+{#await getUserName()}
+  <p>Loading...</p>
+{:then userName}
+  {@const loggedIn = !!userName}
+  {#if !loggedIn}
+    <div class="login-form">
+      <label for="login-email-input">e-mail</label>
+      <input id="login-email-input" placeholder="name" bind:value={emailInput} />
+      <label for="login-password-input">password</label>
+      <input
+        id="login-password-input"
+        placeholder="password"
+        type="password"
+        bind:value={passwordInput}
+      />
+      <div class="login-button">
+        <ButtonUi on:click={login}>Login</ButtonUi>
+      </div>
     </div>
+  {:else}
+    <div class="login-name-display">
+      {userName}としてログインしています。
+      <ButtonUi on:click={logout}>Logout</ButtonUi>
+    </div>
+  {/if}
+{:catch error}
+  <div class="error-msg">
+    <p>ユーザーの読み込み中にエラーが発生しました。</p>
+    <p>{error}</p>
   </div>
-{:else}
-  <div class="login-name-display">
-    {loginUserName}としてログインしています。
-    <ButtonUi on:click={logout}>Logout</ButtonUi>
-  </div>
-{/if}
+{/await}
 
 {#if errorMessage}
   <div class="error-msg">

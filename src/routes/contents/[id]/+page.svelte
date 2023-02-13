@@ -2,7 +2,7 @@
   import ButtonUi from "@/components/ButtonUi.svelte";
   import DesignedPin from "@/components/DesignedPin.svelte";
   import NewItemIcon from "@/components/NewItemIcon.svelte";
-  import RequestBudge from "@/components/RequestBudge.svelte";
+  import RequestContainer from "@/components/RequestContainer.svelte";
   import { getContent, type DocumentContent } from "@/lib/doc";
   import {
     createFavoriteToFirestore,
@@ -11,8 +11,8 @@
   } from "@/lib/favorite";
   import {
     createRequestToFirestore,
-    deleteRequestInterface,
-    modifyRequestInterface,
+    deleteRequestFromList,
+    modifyRequestInList,
     setRequestByUserAndTarget,
     type DocumentRequest,
     requestTypeStrList,
@@ -22,8 +22,8 @@
   import type { PageData } from "./$types";
 
   export let data: PageData;
-
   const documentId = data.documentId;
+
   let documentItem: DocumentContent | null;
   $: documentItem = null;
   $: isFavorite = false;
@@ -34,33 +34,50 @@
   let requestList: DocumentRequest[];
   $: requestList = [];
   $: addButtonDisabled = newRequestType !== 2 && newRequestMessage === "";
-
-  onMount(async () => {
-    // 文書情報を取得
-    const item = await getContent(documentId);
-    documentItem = item;
-    // リクエスト情報を取得
-    await setRequestByUserAndTarget(requestList, documentId);
-    // お気に入りかどうか取得
-    const favFlag = await getIfDocInFavorite(documentId);
-    if (favFlag === undefined) {
-      console.log("error: favorite flag is undefined.");
-    } else {
-      isFavorite = favFlag;
+  $: messagePlaceholder = "";
+  $: {
+    switch (newRequestType) {
+      case 0:
+        messagePlaceholder = "○頁のx行目は△がいい。";
+        break;
+      case 1:
+        messagePlaceholder = "○頁のx行目は正しくは△。";
+        break;
+      case 2:
+        messagePlaceholder = "";
+        break;
+      case 3:
+        messagePlaceholder = "message";
+        break;
+      default:
+        messagePlaceholder = "例外状態になっています。管理者に問い合わせてください。";
+        break;
     }
+  }
+
+  onMount(() => {
+    // 文書情報を取得
+    getContent(documentId).then((item) => {
+      documentItem = item;
+    });
+    // リクエスト情報を取得
+    setRequestByUserAndTarget(requestList, documentId).then(() => {
+      requestList = requestList;
+    });
+    // お気に入りかどうか取得
+    getIfDocInFavorite(documentId).then((favFlag) => {
+      if (favFlag === undefined) {
+        console.log("error: favorite flag is undefined.");
+      } else {
+        isFavorite = favFlag;
+      }
+    });
   });
 
-  // ダウンロードする関数を包んで引数なしの関数を作りコールバックとして渡す.
-  const downloadOpenTab = () => {
-    openFileAsNewTab(documentId);
-  };
-  const downloadDirect = () => {
-    downloadDocument(documentId);
-  };
-
-  const addRequest = async () => {
+  const addRequest = async (): Promise<void> => {
     if (newRequestType !== 2 && newRequestMessage === "") {
       alert("修正依頼または意見を送る場合はメッセージが必須です。");
+      return;
     }
     if (documentItem) {
       const addedRequest = await createRequestToFirestore(
@@ -71,6 +88,7 @@
       );
       if (addedRequest) {
         requestList.push(addedRequest);
+        requestList = requestList;
         newRequestType = 0;
         newRequestMessage = "";
       }
@@ -78,10 +96,11 @@
   };
 
   const modifyRequest = async (ev: CustomEvent<{ id: string }>) => {
-    await modifyRequestInterface(ev.detail.id, requestList);
+    await modifyRequestInList(ev.detail.id, requestList);
+    requestList = requestList;
   };
   const deleteRequest = async (ev: CustomEvent<{ id: string }>) => {
-    await deleteRequestInterface(ev.detail.id, requestList);
+    requestList = await deleteRequestFromList(ev.detail.id, requestList);
   };
 
   // 一つでもあればfavに入っているので, 作るときはひとつ作り, 消すときはすべて消すようにする.
@@ -126,8 +145,8 @@
 
   <h2>ダウンロード</h2>
   <div class="button-container">
-    <ButtonUi on:click={downloadOpenTab}>新しいタブで開く</ButtonUi>
-    <ButtonUi on:click={downloadDirect}>ファイルをダウンロード</ButtonUi>
+    <ButtonUi on:click={() => openFileAsNewTab(documentId)}>新しいタブで開く</ButtonUi>
+    <ButtonUi on:click={() => downloadDocument(documentId)}>ファイルをダウンロード</ButtonUi>
   </div>
 
   <h2>お気に入り登録</h2>
@@ -145,7 +164,7 @@
     文書の修正等を行いたい場合は、ここでリクエストを行ってください。
     継続的に参加したい、または自分で修正を行いたい場合はGitHubリポジトリへの参加申請を行ってください。
   </p>
-  <h3>追加</h3>
+  <h3>リクエストを追加する</h3>
   <p>
     リクエスト内容を記入して追加してください。 メッセージは、GitHub参加依頼の場合は必要ありません。
   </p>
@@ -157,12 +176,12 @@
           <option value={index}>{type}</option>
         {/each}
       </select>
-      <label for="request-message"> メッセージ </label>
+      <label for="request-message">メッセージ</label>
       <input
         id="request-message"
         type="text"
         name="message"
-        placeholder="message"
+        placeholder={messagePlaceholder}
         bind:value={newRequestMessage}
       />
       <div class="add-button">
@@ -170,17 +189,15 @@
       </div>
     </fieldset>
   </div>
-  <h3>これまでのリクエスト一覧</h3>
-  <div class="request-container">
-    {#each requestList as request (request.id)}
-      <RequestBudge
-        {request}
-        showDocTitle={false}
-        on:modify-request={modifyRequest}
-        on:delete-request={deleteRequest}
-      />
-    {/each}
-  </div>
+  {#if requestList.length > 0}
+    <h3>これまでのリクエスト一覧</h3>
+    <RequestContainer
+      {requestList}
+      showDocTitle={false}
+      on:modify-request={modifyRequest}
+      on:delete-request={deleteRequest}
+    />
+  {/if}
 {/if}
 
 <style>
@@ -203,68 +220,52 @@
     content: "・";
   }
 
-  fieldset.add-request-form-field {
+  .add-request-form-field {
     display: grid;
-    grid-template-rows: repeat(2, 2.8rem) 1fr;
+    grid-template-rows: repeat(2, 1.8rem) 1fr;
     grid-template-columns: 8rem 1fr;
-    row-gap: 2rem;
+    row-gap: 1.5rem;
     column-gap: 0.7rem;
-    width: 97%;
     margin: 2rem auto;
     padding: 1.6rem 2rem;
   }
-  @media (max-width: 1024px) {
-    fieldset.add-request-form-field {
-      grid-template-rows: repeat(5, 2.8rem);
-      grid-template-columns: 1fr;
-      row-gap: 1.2rem;
-    }
-    .add-button {
-      grid-column-start: 1;
-    }
-    .request-container {
-      grid-template-columns: 1fr;
-    }
-  }
 
   label {
-    line-height: 2.8rem;
+    line-height: 1.8rem;
     margin-right: 0.7rem;
   }
 
+  select,
   input {
     color: inherit;
+    background-color: inherit;
     background-color: transparent;
-    border: 1px solid #888;
+    border: 1px solid #7f7f7f;
     transition: ease-in-out 0.2s;
   }
   input:focus {
-    outline-width: 0;
     border-radius: 5px;
-    background-color: rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(1.5rem);
-  }
-
-  select {
-    color: inherit;
-    background-color: transparent;
-    border: 1px solid #888;
-    transition: ease-in-out 0.2s;
+    background-color: var(--main-bg-color);
+    backdrop-filter: blur(3rem);
   }
   select:focus {
-    outline-width: 0;
     border-radius: 5px;
-    background-color: rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(1.5rem);
+    background-color: var(--main-bg-color);
+    backdrop-filter: blur(3rem);
   }
 
   .add-button {
     grid-column-start: 2;
     justify-self: right;
   }
-
-  .request-container {
-    display: grid;
-    grid-template-columns: repeat(3, 3fr);
+  @media (max-width: 1024px) {
+    .add-request-form-field {
+      grid-template-rows: repeat(5, 1.8rem);
+      grid-template-columns: 1fr;
+      row-gap: 1.2rem;
+    }
+    .add-button {
+      grid-column-start: 1;
+    }
   }
 </style>
