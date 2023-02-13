@@ -17,6 +17,7 @@
     switch (request.status) {
       case 0:
         message = "以下の内容でリクエストを送りました。";
+        budgeBoxShadowStyle = `${shadowStyleTemplate} rgba(35, 98, 245, 0.6)`;
         break;
       case 1:
         message = "リクエストが処理されました。";
@@ -27,9 +28,9 @@
         budgeBoxShadowStyle = `${shadowStyleTemplate} rgba(249, 34, 34, 0.6)`;
         break;
       default:
-        budgeBoxShadowStyle = `${shadowStyleTemplate} rgba(35, 98, 245, 0.6)`;
         message =
           "例外状態になっています。管理者に問い合わせてください。" + `コード：${request.status}`;
+        budgeBoxShadowStyle = "0";
         break;
     }
     statusMessage = message;

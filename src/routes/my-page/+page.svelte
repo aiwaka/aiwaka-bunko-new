@@ -68,6 +68,7 @@
 </div>
 <!-- TODO: 自分のページにはソート機能がほしいかも -->
 <h2>リクエスト一覧</h2>
+<!-- TODO: リクエストと文書コンテナをコンポーネントとして切り出す -->
 <div class="request-container">
   {#each requestList as request (request.id)}
     <RequestBudge
