@@ -189,6 +189,7 @@
       </div>
     </fieldset>
   </div>
+
   {#if requestList.length > 0}
     <h3>これまでのリクエスト一覧</h3>
     <RequestContainer
@@ -213,30 +214,31 @@
   .favorite-status-text {
     margin-left: 0.8rem;
   }
-  .favorite-status-text > span {
-    color: rgba(orange, 0.8);
-  }
   .note-list::before {
     content: "・";
   }
-
   .add-request-form {
+    padding: 0.5rem 0.2rem;
     width: 97%;
-    margin: 0 auto;
+    margin: 2rem auto;
+    border: 1px solid #7f7f7f;
+    /* NOTE: これがないとなぜかモバイルで崩れる */
+    display: flex;
+    flex-direction: column;
   }
   .add-request-form-field {
     display: grid;
-    grid-template-rows: repeat(2, 1.8rem) 1fr;
+    grid-template-rows: repeat(2, 2.1rem);
+    line-height: 2.1rem;
     grid-template-columns: 8rem 1fr;
-    row-gap: 1.5rem;
-    column-gap: 0.7rem;
-    width: 100%;
-    margin: 2rem auto;
-    padding: 1.6rem 2rem;
+    row-gap: 1.2rem;
+    column-gap: 1rem;
+    padding: 1.2rem 1.5rem;
+    border: none;
   }
 
   label {
-    line-height: 1.8rem;
+    line-height: 2.1rem;
     margin-right: 0.7rem;
   }
 
@@ -265,8 +267,10 @@
   }
   @media (max-width: 1024px) {
     .add-request-form-field {
-      grid-template-rows: repeat(5, 1.8rem);
-      grid-template-columns: 1fr;
+      grid-template-rows: repeat(5, 2.1rem);
+      /* NOTE: ここも1frとするとモバイルでなぜか異常に大きくなる. */
+      grid-template-columns: repeat(1, 85%);
+      column-gap: 0;
       row-gap: 1.2rem;
     }
     .add-button {
