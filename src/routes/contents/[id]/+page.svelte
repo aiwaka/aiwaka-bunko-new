@@ -220,12 +220,17 @@
     content: "・";
   }
 
+  .add-request-form {
+    width: 97%;
+    margin: 0 auto;
+  }
   .add-request-form-field {
     display: grid;
     grid-template-rows: repeat(2, 1.8rem) 1fr;
     grid-template-columns: 8rem 1fr;
     row-gap: 1.5rem;
     column-gap: 0.7rem;
+    width: 100%;
     margin: 2rem auto;
     padding: 1.6rem 2rem;
   }
