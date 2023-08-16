@@ -1,6 +1,6 @@
 <svelte:head>
   <!-- google analytics -->
-  <script async src="TODO:"></script>
+  <!-- <script async src="TODO:"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() {
@@ -9,5 +9,5 @@
     gtag("js", new Date());
 
     gtag("config", "TODO:");
-  </script>
+  </script> -->
 </svelte:head>

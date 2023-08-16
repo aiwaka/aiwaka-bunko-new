@@ -49,7 +49,7 @@
   // });
 </script>
 
-<!-- <Analytics /> -->
+<!-- Analytics -->
 
 <svelte:head>
   <link rel="stylesheet" href={`${base}/style/main.css`} />
@@ -60,7 +60,7 @@
     <meta property="og:title" content="あいわか文庫" />
     <meta property="og:description" content="あいわかが作った文書を保管するウェブサイト" />
     <meta property="og:site_name" content="あいわか文庫" />
-    <meta property="og:image" content="TODO:" />
+    <meta property="og:image" content="https://aiwaka-bunko.web.app/img/blue_2.png" />
     <meta name="twitter:card" content="summary" />
   {/if}
 </svelte:head>
